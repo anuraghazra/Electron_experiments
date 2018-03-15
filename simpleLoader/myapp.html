@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Canvas Boilerplate</title>
+    <style>
+        *{
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            padding: 5px;
+            width: 100%;
+            height: 100%;
+        }
+        canvas {
+            border: 1px solid black;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="c"></canvas>
+<script>
+window.onload = function() {
+    const canvas = document.getElementById('c'),
+        ctx = canvas.getContext('2d');
+    canvas.width = 500;
+    canvas.height = 300;
+    let width = canvas.width,
+        height = canvas.height;
+
+    let balls = [];
+    
+    function createLoader(x,y,gap,speed,speedgap,mag,radius,ballCount) {
+        let mex = x;
+        let mey = y;
+        let megap = gap;
+        let mespeed = speed;
+        let mespeedgap = speedgap;
+        let memag = mag;
+        let meradius = radius;
+        let mecolor = [
+            'white',
+            'deepskyblue',
+            'greenyellow',
+            'mediumpurple',
+            'yellowgreen',
+            'tomato',
+            'orangered',
+        ];
+        for (let i = 0; i < ballCount; i++) {
+            mex += gap;
+            mespeed += mespeedgap;
+            balls.push({
+                x : mex,
+                y : mey,
+                speed : mespeed,
+                mag :  memag,
+                radius : meradius,
+                color : mecolor[i%mecolor.length]
+            });
+        }
+    };
+    
+    createLoader(100,100,20,0.5,0.01,1.5,5,15);
+    let inc = 0;
+    function wave() {
+        inc += 0.2;
+        let delay = 0;
+        for (let i = 0; i < balls.length; i++) {
+            const b = balls[i];
+            b.y += Math.sin(inc*b.speed)*b.mag;
+        }
+    }
+
+    function drawBalls() {
+        for (let i = 0; i < balls.length; i++) {
+            const b = balls[i];
+            ctx.beginPath();
+            ctx.fillStyle = b.color;
+            ctx.arc(b.x,b.y,b.radius,0,Math.PI*2);
+            ctx.fill();
+            ctx.closePath();
+        }
+        let halfLen = (balls.length-1) / 2;
+        ctx.beginPath();
+        ctx.fillStyle = 'white';
+        ctx.font = '15px Century Gothic';
+        ctx.fillText('Loading...',(balls[halfLen].x-30),180);
+        ctx.fill();
+        ctx.closePath();
+    }
+
+    function drawBg() {
+        ctx.fillStyle = '#2d2d2d';
+        ctx.fillRect(0,60,width,height/2);
+    }
+
+    animate();
+    function animate() {
+        ctx.fillStyle = 'rgba(65,65,65,1)';
+        ctx.fillRect(0,0,width,height);
+        drawBg();
+        drawBalls();
+        wave();
+
+        requestAnimationFrame(animate);
+    }
+}
+</script>
+</body>
+</html>
